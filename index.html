@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <script src="/Content/admin-content/js/jquery.min.js"></script>
+
+    <link href="/Content/admin-content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Content/admin-content/js/bootstrap.min.js"></script>
+    <link href="/Content/admin-content/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<div class="content_all">
+    
+<div class="head">
+    <ul>
+        <li style="background-color: #fff; width: 1px;">
+            <div class="logo">
+                <a href="#"><img src="/Content/admin-content/css/img/logo.png"></a>
+            </div><span class="logo_tit">Мониторинг цистерн</span></li>
+        <li style="text-align: right">
+            <div class="head_menu">
+                <a href="/">ТЕКУЩИЕ ДАННЫЕ (НАВИГАЦИЯ)</a>
+                <a href="/Monitoring/AskpEgais">ИСТОРИЯ(АСКП/ЕГАИС)</a>
+                <a href="/Monitoring/GpsPointsCache">КЭШ АНАЛИЗАТОР</a>
+
+                <a href="/Home/Logout">test999 [Выйти]</a>
+            </div>
+        </li>
+    </ul>
+</div>
+
+    <nav>
+    <ul>
+        <li><a href="#" class="active-it">Организации и контроллеры</a></li>
+        <li class="menu_lines2"></li>
+        <li><a href="#">Роли и пользователи</a></li>
+        <li class="menu_lines2"></li>
+        <li><a href="#">Привязка организаций к пользователям</a></li>
+    </ul>
+</nav>
+
+
+
+    <div class="content">
+        <div class="cont_table">
+            
+
+
+<ul ng-app="askpApp" ng-controller="organisationController" ng-cloak>
+    
+
+<!-- Modal - edit_org -->
+<div id="create_or_edit_org" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <form name="createOrUpdateOrgForm" class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" ng-if="mode=='create'">Добавление организации</h4>
+                <h4 class="modal-title" ng-if="mode=='edit'">Организация {{SelectedOrganisation.Name}}</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content-->
+                <div class="formscont">
+                    <div>
+                        <p>Компания</p>
+                        <div class="error-messages">
+                            <div class="field-validation-error" ng-show="createOrUpdateOrgForm.Name.$error.required && createOrUpdateOrgForm.Name.$dirty">
+                                Необходимо ввести наименование организации
+                            </div>
+                        </div>
+                        <input type="text" class="form1" ng-model="CreateOrEditOrganisationModel.Name" name="Name" required>
+                    </div>
+                    <div>
+                        <p>Краткое наименование</p>
+                        <div class="error-messages">
+                            <div class="field-validation-error" ng-show="createOrUpdateOrgForm.ShortName.$error.required && createOrUpdateOrgForm.ShortName.$dirty">
+                                Необходимо ввести краткое наименование организации
+                            </div>
+                        </div>
+                        <input type="text" class="form1" ng-model="CreateOrEditOrganisationModel.ShortName" name="ShortName" required>
+                    </div>
+                    <div>
+                        <p>Код организации в МинРАР</p>
+                        <div class="error-messages">
+                            <div class="field-validation-error" ng-if="mode=='create'" ng-show="createOrUpdateOrgForm.OrganisationCode.$error.createUniqueOrgCode && createOrUpdateOrgForm.OrganisationCode.$dirty">
+                                Код организации должен быть уникальным
+                            </div>
+                            <div class="field-validation-error" ng-if="mode=='edit'" ng-show="createOrUpdateOrgForm.OrganisationCode.$error.editUniqueOrgCode && createOrUpdateOrgForm.OrganisationCode.$dirty">
+                                Код организации должен быть уникальным
+                            </div>
+                            <div class="field-validation-error" ng-show="createOrUpdateOrgForm.OrganisationCode.$error.onlyDigits && createOrUpdateOrgForm.OrganisationCode.$dirty">
+                                В коде организации могут быть только цифры
+                            </div>
+                            <div class="field-validation-error" ng-show="createOrUpdateOrgForm.OrganisationCode.$error.required && createOrUpdateOrgForm.OrganisationCode.$dirty">
+                                Необходимо ввести код организации
+                            </div>
+                        </div>
+                        <input type="text" ng-if="mode==='create'" class="form1" ng-model="CreateOrEditOrganisationModel.OrganisationCode" name="OrganisationCode" create-unique-org-code only-digits required>
+                        <input type="text" ng-if="mode==='edit'" class="form1" ng-model="CreateOrEditOrganisationModel.OrganisationCode" name="OrganisationCode" edit-unique-org-code only-digits required>
+                    </div>
+                </div>
+                <!-- /Modal content-->
+
+                <div class="alert alert-danger" ng-if="mode=='create'" ng-show="CreateError">
+                    Не удалось добавить организацию.
+                </div>
+                <div class="alert alert-danger" ng-if="mode=='edit'" ng-show="EditError">
+                    Не удалось отредактировать организацию.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn-success btn-lg" style="float: left;" ng-click="CreateUpdateOrganisation()">Сохранить</a>
+                <button type="button" class="btn-lg btn-default" data-dismiss="modal" ng-click="ClearCreateOrEditOrganisationModel()">Отменить</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<!-- /Modal - edit_org -->
+
+    <!-- Modal - del_org -->
+<div id="del_org" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title note_er">Удаление организации</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content-->
+                <div class="formscont">
+                    <h1>Вы действительно хотите удалить организацию
+                        <span class="note_er bold">{{SelectedOrganisation.Name}}</span>?
+                    </h1>
+                </div>
+                <!-- /Modal content-->
+            </div>
+            <div class="modal-footer">
+                <div class="alert alert-danger" ng-show="DeleteError">
+                    Не удалось удалить организацию
+                </div>
+                <a ng-click="DeleteError=false;DeleteOrganisation(SelectedOrganisation);" class="btn-danger btn-lg" style="float: left;">Удалить</a>
+                <button type="button" class="btn-lg btn-default" data-dismiss="modal">Отменить</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- /Modal - del_org -->
+
+
+    <!-- Modal - add_controllers -->
+<div id="add_controllers" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <form name="createControllerForm" class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Добавление контроллера</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content-->
+                <div class="formscont">
+                    <input type="hidden" ng-model="CreateControllerModel.OrganisationCode"/>
+
+
+                    <div>
+                        <p>Гос.номер</p>
+                        <div class="error-messages">
+                            <div class="field-validation-error" ng-show="createControllerForm.CarNumber.$error.required && createControllerForm.CarNumber.$dirty">
+                                Необходимо ввести гос. номер
+                            </div>
+                        </div>
+                        <input type="text" class="form1" name="CarNumber" ng-model="CreateControllerModel.CarNumber" required>
+                    </div>
+                    <div>
+                        <p>IMEI - АСКП</p>
+                        <div class="field-validation-error" ng-show="createControllerForm.Imei.$error.required && createControllerForm.Imei.$dirty">
+                            Необходимо ввести Imei
+                        </div>
+                        <div class="field-validation-error" ng-show="createControllerForm.Imei.$error.onlyDigits && createControllerForm.Imei.$dirty">
+                            В поле Imei должны быть только цифры
+                        </div>
+                        <input type="text" class="form1" name="Imei" ng-model="CreateControllerModel.Imei" required only-digits>
+                    </div>
+                    <div>
+                        <p>IMEI - ЕГАИС</p>
+                        <div class="field-validation-error" ng-show="createControllerForm.EgaisImei.$error.required && createControllerForm.EgaisImei.$dirty">
+                            Необходимо ввести Egais Imei
+                        </div>
+                        <div class="field-validation-error" ng-show="createControllerForm.EgaisImei.$error.onlyDigits && createControllerForm.EgaisImei.$dirty">
+                            В поле Egais Imei должны быть только цифры
+                        </div>
+                        <input type="text" class="form1" name="EgaisImei" ng-model="CreateControllerModel.EgaisImei" required only-digits>
+                    </div>
+                    
+                </div>
+
+                <div class="alert alert-danger" ng-show="CreateError">
+                    Не удалось добавить контроллер.
+                </div>
+                <!-- /Modal content-->
+            </div>
+            <div class="modal-footer">
+                <a href="#" ng-click="CreateController(CreateControllerModel);" class="btn-success btn-lg" style="float: left;">Сохранить</a>
+                <button ng-click="ClearCreateControllerModel();" type="button" class="btn-lg btn-default" data-dismiss="modal">Отменить</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<!-- /Modal - add_controllers -->
+
+
+    <!-- Modal - edit_controllers -->
+<div id="edit_controllers" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <form name="editControllerForm" class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Контроллер - {{SelectedController.CarNumber}} - {{SelectedOrganisation.Name}}</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content-->
+                <div class="formscont">
+                    <input type="hidden" ng-model="EditControllerModel.OrganisationCode" />
+                    <div>
+                        <p>Гос.номер</p>
+                        <div class="field-validation-error" ng-show="editControllerForm.CarNumber.$error.required && editControllerForm.CarNumber.$dirty">
+                            Необходимо ввести гос. номер
+                        </div>
+                        <input type="text" class="form1" name="CarNumber" ng-model="EditControllerModel.CarNumber" required>
+                    </div>
+                    <div>
+                        <p>IMEI - АСКП</p>
+                        <div class="field-validation-error" ng-show="editControllerForm.Imei.$error.required && editControllerForm.Imei.$dirty">
+                            Необходимо ввести Imei
+                        </div>
+                        <div class="field-validation-error" ng-show="editControllerForm.Imei.$error.onlyDigits && editControllerForm.Imei.$dirty">
+                            В поле Imei должны быть только цифры
+                        </div>
+                        <input type="text" class="form1" name="Imei" ng-model="EditControllerModel.Imei" required only-digits>
+                    </div>
+                    <div>
+                        <p>IMEI - ЕГАИС</p>
+                        <div class="field-validation-error" ng-show="editControllerForm.EgaisImei.$error.required && editControllerForm.EgaisImei.$dirty">
+                            Необходимо ввести Egais Imei
+                        </div>
+                        <div class="field-validation-error" ng-show="editControllerForm.EgaisImei.$error.onlyDigits && editControllerForm.EgaisImei.$dirty">
+                            В поле Egais Imei должны быть только цифры
+                        </div>
+                        <input type="text" class="form1" name="EgaisImei" ng-model="EditControllerModel.EgaisImei" required only-digits>
+                    </div>
+                    
+                </div>
+                <div class="alert alert-danger" ng-show="EditError">
+                    Не удалось отредактировать контроллер.
+                </div>
+                <!-- /Modal content-->
+            </div>
+            <div class="modal-footer">
+                <a ng-click="EditController(EditControllerModel);"  class="btn-success btn-lg" style="float: left;">Сохранить</a>
+                <button ng-click="EditControllerModel();" type="button" class="btn-lg btn-default" data-dismiss="modal">Отменить</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<!-- /Modal - edit_controllers -->
+
+
+    <!-- Modal - del_controllers -->
+<div id="del_controllers" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title note_er">Удаление контроллера</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content-->
+                <div class="formscont">
+                    <h1>Imei {{SelectedController.Imei}}</h1>
+                    <h1>Гос. номер {{SelectedController.CarNumber}}</h1>
+                </div>
+                <!-- /Modal content-->
+                <div class="alert alert-danger" ng-show="DeleteError">
+                    Не удалось удалить контроллер
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" ng-click="DeleteController(SelectedController)" class="btn-danger btn-lg" style="float: left;">Удалить</a>
+                <button type="button" class="btn-lg btn-default" data-dismiss="modal">Отменить</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- /Modal - del_controllers -->
+
+
+
+    
+    <!-- Modal - add_counter -->
+<div id="create_or_edit_sensor" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <form name="createOrUpdateSensorForm" class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" ng-if="mode=='create'">Добавление нового оборудования</h4>
+                <h4 class="modal-title" ng-if="mode=='edit'">Счетчик № {{SelectedSensor.SerialNumber}} - {{SelectedController.CarNumber}}</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content-->
+                <div class="formscont">
+                    <div>
+                        <p>Наименование</p>
+                        <div class="field-validation-error" ng-show="createOrUpdateSensorForm.Name.$error.required && createOrUpdateSensorForm.Name.$dirty">
+                            Необходимо ввести наименование расходомера
+                        </div>
+                        
+                        <select class="form1" ng-model="CreateOrEditSensorModel.Name" name="Name" required>
+                            <option ng-repeat="sensorName in SensorNames" value="{{sensorName}}">{{sensorName}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p>Режим/Номер точки</p>
+                        
+                        <div class="field-validation-error" ng-show="createOrUpdateSensorForm.PointNumber.$error.required && createOrUpdateSensorForm.PointNumber.$dirty">
+                            Необходимо ввести № точки
+                        </div>
+                        <select class="form1" ng-model="CreateOrEditSensorModel.PointNumber" name="PointNumber" required>
+                            <option ng-repeat="pointNumber in PointNumbers" value="{{pointNumber}}">{{pointNumber}}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <p>Серийный номер</p>
+                        <div class="field-validation-error" ng-show="createOrUpdateSensorForm.SerialNumber.$error.required && createOrUpdateSensorForm.SerialNumber.$dirty">
+                            Необходимо ввести серийный № точки
+                        </div>
+                        <div class="field-validation-error" ng-show="createOrUpdateSensorForm.SerialNumber.$error.onlyDigits && createOrUpdateSensorForm.SerialNumber.$dirty">
+                            В серийном номере точки могут быть только цифры
+                        </div>
+                        <input type="text" class="form1" name="SerialNumber" ng-model="CreateOrEditSensorModel.SerialNumber" required only-digits>                        
+                    </div>
+                    
+                </div>
+                <!-- /Modal content-->
+
+                <div class="alert alert-danger" ng-if="mode=='create'" ng-show="CreateError">
+                    Не удалось добавить расходомер.
+                </div>
+                <div class="alert alert-danger" ng-if="mode=='edit'" ng-show="EditError">
+                    Не удалось отредактировать расходомер.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn-success btn-lg" style="float: left;" ng-click="CreateUpdateSensor(CreateOrEditSensorModel)">Сохранить</a>
+                <button type="button" class="btn-lg btn-default" data-dismiss="modal" ng-click="ClearCreateOrEditSensorModel()">Отменить</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<!-- /Modal - add_counter -->
+
+
+    <!-- Modal - del_counter -->
+<div id="del_counter" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title note_er">Удаление счетчика</h4>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content-->
+                <div class="formscont">
+                    <h1>Счетчик № {{SelectedSensor.SerialNumber}}</h1>
+                </div>
+                <!-- /Modal content-->
+            </div>
+            <div class="modal-footer">
+                <a ng-click="DeleteError=false;DeleteSensor(SelectedSensor);" class="btn-danger btn-lg" style="float: left;">Удалить</a>
+                <button type="button" class="btn-lg btn-default" data-dismiss="modal">Отменить</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- /Modal - del_counter -->
+
+
+
+    <li class="left_cell">
+        <div class="cont_left" id="article1">
+            <div class="table1">
+    <ul class="thead">
+        <li style="width: 1px">№</li>
+        <li>
+            <h1>Организация</h1>
+        </li>
+        <li style="width: 1px">Код<br>организации</li>
+        <li style="text-align: center; width: 1px;">Ред.</li>
+    </ul>
+
+    <ul class="{{GetSelectedItemCssClass(org, SelectedOrganisation)}}" ng-repeat="org in Organisations" ng-click="SetSelectedOrganisation(org)" ng-cloak>
+        <li ng-cloak>{{org.Index}}</li>
+        <li ng-cloak>{{org.Name}}</li>
+        <li ng-cloak>{{org.OrganisationCode}}</li>
+        <li>
+            <div class="ic_block">
+                <a href="" ng-click="SetCreateOrEditOrganisationModel(org, 'edit')" data-toggle="modal" data-target="#create_or_edit_org" class="ic_edit"></a>
+                <a href="" data-toggle="modal" data-target="#del_org" class="ic_del"></a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="table_foot">
+    <a href="" ng-click="SetCreateOrEditOrganisationModel(org, 'create')" class="btn-lg btn-primary" data-toggle="modal" data-target="#create_or_edit_org" style="margin-top: 10px; display: inline-block">Добавить организацию</a>
+    <br><br>
+</div>
+        </div>
+    </li>
+    <li class="right_cell">
+        <div class="cont_right" id="aside1">
+            <div class="table2"></div>
+
+            <h1 style="color: #2A6BA2; margin: 23px 0 24px 0;" ng-cloak>{{SelectedOrganisation.Name}}</h1>
+<div class="line1"></div>
+<h2 style="color: #2A6BA2">Контроллеры</h2>
+<div class="table2">
+    <ul class="thead">
+        <li>№</li>
+        <li>Гос.номер</li>
+        <li>IMEI-АСКП</li>
+        <li>IMEI-ЕГАИС</li>
+        <li style="text-align: center; width: 1px;">Ред.</li>
+    </ul>
+    <ul ng-repeat="controller in SelectedOrganisation.Controllers" class="{{GetSelectedItemCssClass(controller, SelectedController)}}" ng-click="SetSelectedController(controller)" ng-cloak>
+        <li>{{controller.Index}}</li>
+        <li>{{controller.CarNumber}}</li>
+        <li>{{controller.Imei}}</li>
+        <li>{{controller.EgaisImei}}</li>
+        <li>
+            <div class="ic_block_small">
+                <a href="" ng-click="SetEditControllerModel(controller)" class="ic_edit_small" data-toggle="modal" data-target="#edit_controllers"></a>
+                <a href="" data-toggle="modal" data-target="#del_controllers" class="ic_del_small"></a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="table_foot">
+    <a href="" ng-click="SetCreateControllerModel()" class="btn btn-primary" data-toggle="modal" data-target="#add_controllers">Добавить контроллер</a>
+</div>
+            <h2 style="color: #2A6BA2">Оборудование - {{SelectedController.CarNumber}}</h2>
+<div class="table2">
+    <ul class="thead">
+        <li>Наименование оборудования</li>
+        <li>Режим/Номер точки</li>
+        <li>№ оборудования</li>
+        <li>Дата установки</li>
+        <li style="text-align: center; width: 1px;">Ред.</li>
+    </ul>
+    <ul ng-repeat="sensor in SelectedController.Sensors" class="{{GetSelectedItemCssClass(sensor, SelectedSensor)}}" ng-click="SetSelectedSensor(sensor)" ng-cloak>
+        <li>{{sensor.Name}}</li>
+        <li>{{sensor.PointNumber}}</li>
+        <li>{{sensor.SerialNumber}}</li>
+        <li>{{sensor.SensorDate | date: 'dd.MM.yyyy'}}</li>
+        <li>
+            <div class="ic_block_small">
+                <a href="" ng-click="SetCreateOrEditSensorModel(sensor, 'edit')" class="ic_edit_small" data-toggle="modal" data-target="#create_or_edit_sensor"></a>
+                <a href="" class="ic_del_small" data-toggle="modal" data-target="#del_counter"></a>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="table_foot">
+    <a href="" class="btn btn-primary" ng-click="SetCreateOrEditSensorModel(sensor, 'create')" data-toggle="modal" data-target="#create_or_edit_sensor">Добавить оборудование</a>
+</div>
+
+        </div>
+    </li>
+</ul>
+        </div>
+    </div>
+
+</div>
+    
+    <script src="/Content/admin-content/js/inblockfix.js"></script>
+
+    <script src="/Scripts/moment.js"></script>
+    <script src="/Scripts/moment-with-locales.js"></script>
+
+    <script src="/Scripts/date.format.js"></script>
+
+    <link rel="stylesheet" href="/Content/kendo/kendo.common.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.default.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.common-material.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.material.min.css"/>
+    <link rel="stylesheet" href="/Content/angular-chart/angular-chart.css"/>
+
+
+
+
+
+    <script src='/Scripts/angular.js'></script>
+
+    <script src="/Scripts/objects.js"></script>
+
+    <script src="/Content/kendo/kendo.all.min.js"></script>
+    <script src="/Scripts/cultures/kendo.culture.ru-RU.min.js"></script>
+    <script src="/Content/kendo/kendo-elements.js"></script>
+
+    <script src='/Scripts/angular-simple-logger.js'></script>
+    <script src="/AngularJs/Controllers/organisationController.js"></script>
+    <script src="/AngularJs/Services/organisationCreateCodeIsUnique.js"></script>
+    <script src="/AngularJs/Services/organisationEditCodeIsUnique.js"></script>
+    <script src="/AngularJs/Directives/create-unique-org-code.js"></script>
+    <script src="/AngularJs/Directives/edit-unique-org-code.js"></script>
+    <script src="/AngularJs/Directives/only-digits.js"></script>
+    
+</body>
+</html>
