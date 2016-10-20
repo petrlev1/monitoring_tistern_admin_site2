@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <script src="/Content/admin-content/js/jquery.min.js"></script>
+
+    <link href="/Content/admin-content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <script src="/Content/admin-content/js/bootstrap.min.js"></script>
+    <link href="/Content/admin-content/css/style.css" rel="stylesheet" type="text/css">
+
+    <script src="/Scripts/input-mask/jquery.maskedinput.min.js"></script>
+</head>
+<body>
+
+<div class="content_all">
+    
+<div class="head">
+    <ul>
+        <li style="background-color: #fff; width: 1px;">
+            <div class="logo">
+                <a href="#"><img src="/Content/admin-content/css/img/logo.png"></a>
+            </div><span class="logo_tit">Мониторинг цистерн</span></li>
+        <li style="text-align: right">
+            <div class="head_menu">
+                <a href="/">ТЕКУЩИЕ ДАННЫЕ (НАВИГАЦИЯ)</a>
+                <a href="/Monitoring/AskpEgais">ИСТОРИЯ(АСКП/ЕГАИС)</a>
+                <a href="/Monitoring/GpsPointsCache">КЭШ АНАЛИЗАТОР</a>
+
+                <a href="/Home/Logout">test999 [Выйти]</a>
+            </div>
+        </li>
+    </ul>
+</div>
+
+    <nav class="admin-top-navbar">
+    <ul>
+        <li><a href="/Admin" >Организации и контроллеры</a></li>
+        <li class="menu_lines2"></li>
+        <li><a href="/Admin/UserRoles">Роли и пользователи</a></li>
+        <li class="menu_lines2"></li>
+        <li><a href="/Admin/UserBindingsToOrgs">Привязка организаций к пользователям</a></li>
+    </ul>
+</nav>
+
+<script>  
+
+      
+    var url = "/Admin/UserBindingsToOrgs";
+
+    $(".admin-top-navbar li a[href='/Admin/UserBindingsToOrgs']").addClass("active-it");
+</script>
+
+
+    <div class="content">
+        <div class="cont_table">
+            
+
+
+<span ng-app="askpApp" ng-controller="userBindingController" ng-cloak>
+    
+<li class="left_cell">
+
+    <div class="cont_left padding">
+
+        <h2 style="color:#2A6BA2; margin-bottom:20px; display:block">Пользователи</h2>
+
+        <form class="navbar-form navbar-left" role="search" style="margin:0 0 20px 0; padding:0">
+            <div class="form-group">
+                <input type="text" ng-model="SearchUsers" class="form-control" placeholder="Поиск пользователей...">
+            </div>            
+        </form>
+
+        <div class="table1">
+
+            <ul ng-repeat="user in Users | filter:{$: SearchUsers} track by $index" ng-click="SetSelectedUser(user);GetBindingsToOrgs(user.UserName);" class="{{GetUserRowCssClass(user)}}">
+                <li>{{user.UserName}}</li>
+                <li>{{user.OrganisationName}}</li>
+            </ul>
+        </div>
+
+    </div>
+
+</li>
+
+
+    <div class="cont_right">
+
+    <h2 style="color:#2A6BA2; margin-bottom:20px; display:block">Закрепленные организации за пользователем {{SelectedUser.UserName}}</h2>
+
+    <form class="navbar-form navbar-left" role="search" style="margin:0 0 20px 0; padding:0">
+        <div class="form-group">
+            <input type="text" ng-model="OrgsSearchText" class="form-control" placeholder="Поиск организаций...">
+        </div>        
+    </form>
+
+    <div class="table_data_askp">
+
+        <ul ng-repeat="org in UserBindings[SelectedUser.UserName] | filter: {OrganisationName : OrgsSearchText} track by $index">
+            <li style="width: 1px;"><input type="checkbox" class="checkbox_med" ng-model="org.Belong"></li>
+            <li>
+                <label>
+                    <input type="checkbox" class="contchek">{{org.OrganisationName}}
+                    <div class="controllers">
+                        <label ng-repeat="car in org.UserCarBindings track by $index">
+                            <input type="checkbox" ng-model="car.Belong">{{car.CarNumber}}
+                        </label>
+                    </div>
+                </label>
+            </li>
+        </ul>
+
+    </div>
+
+</div>
+
+
+
+</span>
+
+
+        </div>
+    </div>
+
+</div>
+    
+    <script src="/Content/admin-content/js/inblockfix.js"></script>
+
+    <script src="/Scripts/moment.js"></script>
+    <script src="/Scripts/moment-with-locales.js"></script>
+
+    <script src="/Scripts/date.format.js"></script>
+
+    <link rel="stylesheet" href="/Content/kendo/kendo.common.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.default.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.common-material.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="/Content/kendo/kendo.material.min.css"/>
+    <link rel="stylesheet" href="/Content/angular-chart/angular-chart.css"/>
+
+
+
+
+
+    <script src='/Scripts/angular.js'></script>
+
+    <script src="/Scripts/objects.js"></script>
+
+    <script src="/Content/kendo/kendo.all.min.js"></script>
+    <script src="/Scripts/cultures/kendo.culture.ru-RU.min.js"></script>
+    <script src="/Content/kendo/kendo-elements.js"></script>
+
+    <script src='/Scripts/angular-simple-logger.js'></script>
+
+    <script src="/AngularJs/Controllers/organisationController.js"></script>
+    <script src="/AngularJs/Controllers/userBindingController.js"></script>
+
+    <script src="/AngularJs/Services/organisationCreateCodeIsUnique.js"></script>
+    <script src="/AngularJs/Services/organisationEditCodeIsUnique.js"></script>
+    <script src="/AngularJs/Directives/create-unique-org-code.js"></script>
+    <script src="/AngularJs/Directives/edit-unique-org-code.js"></script>
+    <script src="/AngularJs/Directives/only-digits.js"></script>
+    <script src="/AngularJs/Directives/isImei.js"></script>
+
+    <script src="/AngularJs/Filters/aspnetJsonToDate.js"></script>
+
+<script src="/Scripts/arraySort.js"></script>
+</body>
+</html>
