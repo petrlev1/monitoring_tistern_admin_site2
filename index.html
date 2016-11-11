@@ -46,106 +46,111 @@
 
 
     <div class="content">
-        <div class="cont_table">
+      <div class="container-fluid">
+        <div class="row">
+         
+         <div class="col-lg-4">
+         
+<div class="cont_left" ng-app="askpApp" ng-controller="organisationController" ng-cloak>
+            
+            <h2 style="color:#2A6BA2">Организация</h2>
+            <div class="note1" style="position: absolute; top: 52px; right: 0; text-align: right;">Всего организаций: <strong>109</strong></div>
+            <input type="text" placeholder="Поиск организаций" class="form1_right">
+            
+            <div style="margin-top: 21px;"><a href="" ng-click="SetCreateOrEditOrganisationModel(org, 'create')" class="btn btn-primary" data-toggle="modal" data-target="#create_or_edit_org">Добавить организацию</a></div>
+             
+            <div class="table3" style="margin-top: 5px">
+              <ul class="thead">
+                <li>№</li><li>Организация</li><li>Код организации</li><li style="text-align:center; width:1px;">Ред.</li>
+              </ul>
+                
+              <ul class="{{GetSelectedItemCssClass(org, SelectedOrganisation)}}" ng-repeat="org in Organisations" ng-click="SetSelectedOrganisation(org)" ng-cloak>
+                <li ng-cloak>{{org.Index}}</li>
+                <li ng-cloak>{{org.Name}}</li>
+                <li ng-cloak>{{org.OrganisationCode}}</li>
+                <li>
+                  <div class="ic_block">
+                    <a href="" ng-click="SetCreateOrEditOrganisationModel(org, 'edit')" data-toggle="modal" data-target="#create_or_edit_org" class="ic_edit"></a>
+                    <a href="" data-toggle="modal" data-target="#del_org" class="ic_del"></a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="table_foot">
+               
+              <a href="" ng-click="SetCreateOrEditOrganisationModel(org, 'create')" class="btn btn-primary" data-toggle="modal" data-target="#create_or_edit_org" style="margin-top: 10px; display: inline-block">Добавить организацию</a>
+                
+            </div>
+           </div>
+			</div>
             
 
-
-<ul ng-app="askpApp" ng-controller="organisationController" ng-cloak>
-
-    <li class="left_cell">
-        <div class="cont_left" id="article1">
-            <div class="table1">
-    <ul class="thead">
-        <li style="width: 1px">№</li>
-        <li>
-            <h1>Организация</h1>
-        </li>
-        <li style="width: 1px">Код<br>организации</li>
-        <li style="text-align: center; width: 1px;">Ред.</li>
-    </ul>
-
-    <ul class="{{GetSelectedItemCssClass(org, SelectedOrganisation)}}" ng-repeat="org in Organisations" ng-click="SetSelectedOrganisation(org)" ng-cloak>
-        <li ng-cloak>{{org.Index}}</li>
-        <li ng-cloak>{{org.Name}}</li>
-        <li ng-cloak>{{org.OrganisationCode}}</li>
-        <li>
-            <div class="ic_block">
-                <a href="" ng-click="SetCreateOrEditOrganisationModel(org, 'edit')" data-toggle="modal" data-target="#create_or_edit_org" class="ic_edit"></a>
-                <a href="" data-toggle="modal" data-target="#del_org" class="ic_del"></a>
+            <div class="col-lg-4">
+            
+            <h2 style="color: #2A6BA2">Контроллеры</h2>
+				<div style="margin: 21px 0 6px 0;"><a href="" ng-click="SetCreateControllerModel()" class="btn btn-primary" data-toggle="modal" data-target="#add_controllers">Добавить контроллер</a></div>
+            <div class="table3">
+              <ul class="thead">
+                <li>№</li>
+                <li>Гос.номер</li>
+                <li>IMEI-АСКП</li>
+                <li>IMEI-ЕГАИС</li>
+                <li style="text-align: center; width: 1px;">Ред.</li>
+              </ul>
+              <ul ng-repeat="controller in SelectedOrganisation.Controllers" class="{{GetSelectedItemCssClass(controller, SelectedController)}}" ng-click="SetSelectedController(controller)" ng-cloak>
+                <li>{{controller.Index}}</li>
+                <li>{{controller.CarNumber}}</li>
+                <li>{{controller.Imei}}</li>
+                <li>{{controller.EgaisImei}}</li>
+                <li>
+                  <div class="ic_block_small">
+                    <a href="" ng-click="SetEditControllerModel(controller)" class="ic_edit_small" data-toggle="modal" data-target="#edit_controllers"></a>
+                    <a href="" data-toggle="modal" data-target="#del_controllers" class="ic_del_small"></a>
+                  </div>
+                </li>
+              </ul>
             </div>
-        </li>
-    </ul>
-</div>
-<div class="table_foot">
-    <a href="" ng-click="SetCreateOrEditOrganisationModel(org, 'create')" class="btn-lg btn-primary" data-toggle="modal" data-target="#create_or_edit_org" style="margin-top: 10px; display: inline-block">Добавить организацию</a>
-    <br><br>
-</div>
-        </div>
-    </li>
-    <li class="right_cell">
-        <div class="cont_right" id="aside1">
-            <div class="table2"></div>
-
-            <h1 style="color: #2A6BA2; margin: 23px 0 24px 0;" ng-cloak>{{SelectedOrganisation.Name}}</h1>
-<div class="line1"></div>
-<h2 style="color: #2A6BA2">Контроллеры</h2>
-<div class="table2">
-    <ul class="thead">
-        <li>№</li>
-        <li>Гос.номер</li>
-        <li>IMEI-АСКП</li>
-        <li>IMEI-ЕГАИС</li>
-        <li style="text-align: center; width: 1px;">Ред.</li>
-    </ul>
-    <ul ng-repeat="controller in SelectedOrganisation.Controllers" class="{{GetSelectedItemCssClass(controller, SelectedController)}}" ng-click="SetSelectedController(controller)" ng-cloak>
-        <li>{{controller.Index}}</li>
-        <li>{{controller.CarNumber}}</li>
-        <li>{{controller.Imei}}</li>
-        <li>{{controller.EgaisImei}}</li>
-        <li>
-            <div class="ic_block_small">
-                <a href="" ng-click="SetEditControllerModel(controller)" class="ic_edit_small" data-toggle="modal" data-target="#edit_controllers"></a>
-                <a href="" data-toggle="modal" data-target="#del_controllers" class="ic_del_small"></a>
+            <div class="table_foot">
+              <a href="" ng-click="SetCreateControllerModel()" class="btn btn-primary" data-toggle="modal" data-target="#add_controllers">Добавить контроллер</a>
             </div>
-        </li>
-    </ul>
-</div>
-<div class="table_foot">
-    <a href="" ng-click="SetCreateControllerModel()" class="btn btn-primary" data-toggle="modal" data-target="#add_controllers">Добавить контроллер</a>
-</div>
+			  </div>
+            
+            <div class="col-lg-4">
             <h2 style="color: #2A6BA2">Оборудование - {{SelectedController.CarNumber}}</h2>
-<div class="table2">
-    <ul class="thead">
-        <li>Наименование оборудования</li>
-        <li>Режим/Номер точки</li>
-        <li>№ оборудования</li>
-        <li>Дата установки</li>
-        <li style="text-align: center; width: 1px;">Ред.</li>
-    </ul>
-    <ul ng-repeat="sensor in SelectedController.Sensors" class="{{GetSelectedItemCssClass(sensor, SelectedSensor)}}" ng-click="SetSelectedSensor(sensor)" ng-cloak>
-        <li>{{sensor.Name}}</li>
-        <li>{{sensor.PointNumber}}</li>
-        <li>{{sensor.SerialNumber}}</li>
-        <li>{{sensor.SensorDate | date: 'dd.MM.yyyy'}}</li>
-        <li>
-            <div class="ic_block_small">
-                <a href="" ng-click="SetCreateOrEditSensorModel(sensor, 'edit')" class="ic_edit_small" data-toggle="modal" data-target="#create_or_edit_sensor"></a>
-                <a href="" class="ic_del_small" data-toggle="modal" data-target="#del_counter"></a>
+            
+            <div style="margin: 21px 0 6px 0;"><a href="" class="btn btn-primary" ng-click="SetCreateOrEditSensorModel(sensor, 'create')" data-toggle="modal" data-target="#create_or_edit_sensor">Добавить оборудование</a></div>
+            
+            <div class="table3">
+              <ul class="thead">
+                <li>Наименование оборудования</li>
+                <li>Режим/Номер точки</li>
+                <li>№ оборудования</li>
+                <li>Дата установки</li>
+                <li style="text-align: center; width: 1px;">Ред.</li>
+              </ul>
+              <ul ng-repeat="sensor in SelectedController.Sensors" class="{{GetSelectedItemCssClass(sensor, SelectedSensor)}}" ng-click="SetSelectedSensor(sensor)" ng-cloak>
+                <li>{{sensor.Name}}</li>
+                <li>{{sensor.PointNumber}}</li>
+                <li>{{sensor.SerialNumber}}</li>
+                <li>{{sensor.SensorDate | date: 'dd.MM.yyyy'}}</li>
+                <li>
+                  <div class="ic_block_small">
+                    <a href="" ng-click="SetCreateOrEditSensorModel(sensor, 'edit')" class="ic_edit_small" data-toggle="modal" data-target="#create_or_edit_sensor"></a>
+                    <a href="" class="ic_del_small" data-toggle="modal" data-target="#del_counter"></a>
+                  </div>
+                </li>
+              </ul>
             </div>
-        </li>
-    </ul>
-</div>
-<div class="table_foot">
-    <a href="" class="btn btn-primary" ng-click="SetCreateOrEditSensorModel(sensor, 'create')" data-toggle="modal" data-target="#create_or_edit_sensor">Добавить оборудование</a>
-</div>
-
+            <div class="table_foot">
+              <a href="" class="btn btn-primary" ng-click="SetCreateOrEditSensorModel(sensor, 'create')" data-toggle="modal" data-target="#create_or_edit_sensor">Добавить оборудование</a>
+            </div>
+			  </div>
+            
+          </div>
+        
         </div>
-    </li>
-</ul>
-        </div>
-    </div>
-
-</div>
+      </div>
+  </div>
     
     <script src="https://centrikt.ru:40001/Content/admin-content/js/inblockfix.js"></script>
 
