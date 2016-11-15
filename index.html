@@ -66,7 +66,25 @@
                 
               <ul class="{{GetSelectedItemCssClass(org, SelectedOrganisation)}}" ng-repeat="org in Organisations" ng-click="SetSelectedOrganisation(org)" ng-cloak>
                 <li ng-cloak>{{org.Index}}</li>
-                <li ng-cloak>{{org.Name}}</li>
+                <li ng-cloak>{{org.Name}}
+                
+                <div class="blockAuto"><input type="text" placeholder="Поиск автомобилей" class="formSSmall"></div>
+					<div style="margin: 11px 0 7px 0"><a href="" class="btn-sm btn-primary" data-toggle="modal" data-target="#add_avto">Добавить автомобиль</a></div>
+					
+                    <div class="tableIn">
+                <ul class="thead">
+                    <li>№</li><li>Гос.номер</li><li style="text-align:center; width:1px;"></li>
+                </ul>
+                <ul>
+                    <li>001</li><li>аа0000 11</li><li><div class="ic_block_small2"><a href="" class="ic_edit_small2" data-toggle="modal" data-target="#edit_avto"></a><a href="" data-toggle="modal" data-target="#del_avto" class="ic_del_small2"></a></div></li>
+                </ul>
+                <ul>
+                    <li>001</li><li>аа0000 11</li><li><div class="ic_block_small2"><a href="" class="ic_edit_small2" data-toggle="modal" data-target="#edit_avto"></a><a href="" data-toggle="modal" data-target="#del_avto" class="ic_del_small2"></a></div></li>
+                </ul>
+                
+            </div>
+                
+                </li>
                 <li ng-cloak>{{org.OrganisationCode}}</li>
                 <li>
                   <div class="ic_block">
